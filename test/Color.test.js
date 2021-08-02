@@ -14,7 +14,7 @@ contract("Color", (accounts) => {
   describe("deployment", async () => {
     it("Deploys successfully", async () => {
       const address = contract.address;
-      console.log("Contract address: " + address);
+      //   console.log("Contract address: " + address);
       assert.notEqual(address, "");
       assert.notEqual(address, 0x0);
       assert.notEqual(address, null);
@@ -51,6 +51,27 @@ contract("Color", (accounts) => {
 
       // Failure: cannot mint same color twice
       await contract.mint("#EC058E").should.be.rejected;
+    });
+  });
+
+  describe("indexing", async () => {
+    it("lists colors", async () => {
+      // Mint 3 more tokens
+      await contract.mint("#5386E4");
+      await contract.mint("#FFFFFF");
+      await contract.mint("#000000");
+      const totalSupply = await contract.totalSupply();
+
+      let color;
+      let result = [];
+
+      for (let i = 1; i <= totalSupply; i++) {
+        color = await contract.colors(i - 1);
+        result.push(color);
+      }
+
+      let expected = ["#EC058E", "#5386E4", "#FFFFFF", "#000000"];
+      assert.equal(result.join(","), expected.join(","));
     });
   });
 });
